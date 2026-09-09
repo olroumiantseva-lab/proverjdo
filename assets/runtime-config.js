@@ -5,4 +5,7 @@ window.__SUPABASE_CONFIG__ = {
   contractScanFunction: "contract-scan",
   contractPaymentFunction: "create-payment",
   contractResultFunction: "contract-result",
+  documentExplainScanFunction: "document-explain-scan",
+  documentPaymentFunction: "create-payment",
+  documentExplainResultFunction: "document-explain-result",
 };
