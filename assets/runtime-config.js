@@ -8,4 +8,7 @@ window.__SUPABASE_CONFIG__ = {
   documentExplainScanFunction: "document-explain-scan",
   documentPaymentFunction: "create-payment",
   documentExplainResultFunction: "document-explain-result",
+  letterDraftScanFunction: "letter-draft-scan",
+  letterPaymentFunction: "create-payment",
+  letterDraftResultFunction: "letter-draft-result",
 };
