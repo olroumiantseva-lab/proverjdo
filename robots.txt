@@ -4,5 +4,7 @@ Disallow: /check/
 Disallow: /scan/
 Disallow: /login/
 Disallow: /result/
+Disallow: /explain/
+Disallow: /explain-result/
 
 Sitemap: https://proverjdo.ru/sitemap.xml
