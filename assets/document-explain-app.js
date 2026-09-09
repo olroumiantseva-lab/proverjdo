@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const STORAGE_KEY='proverjdo.explain.v1';
+  const STORAGE_KEY='proverjdo.explain.v2';
   const RESULT_ORDER_KEY='proverjdo.result.order_id';
   const PRODUCT_ID='document_explain_once_290';
   const byId=(id)=>document.getElementById(id);
@@ -16,12 +16,12 @@
   function renderPreview(data){
     byId('explain-document-type').textContent=data.document_type||'Документ';
     byId('explain-summary').textContent=data.summary||'Краткая оценка готова.';
-    byId('explain-counts').textContent=`Действий: ${Number(data.actions_count||0)} · важных пунктов: ${Number(data.important_count||0)} · рисков: ${Number(data.risks_count||0)}`;
+    byId('explain-counts').textContent=`Действий: ${Number(data.actions_count||0)} · важных пунктов: ${Number(data.important_count||0)}`;
     renderParagraphs(byId('explain-preview-analysis'),data.preview_analysis||data.summary||'');
     const firstRisk=Array.isArray(data.risks)?data.risks[0]:null;
     const firstImportant=Array.isArray(data.important_points)?data.important_points[0]:null;
     const first=firstRisk||firstImportant;
-    byId('explain-first-title').textContent=first?.title||'Что важно';
+    byId('explain-first-title').textContent=first?.title||'Что важно проверить';
     byId('explain-first-text').textContent=firstRisk?.why||firstImportant?.explanation||'Полный разбор покажет юридические и практические последствия документа.';
     byId('explain-first-action').textContent=first?.action||'Откройте полный разбор, чтобы увидеть все риски и действия.';
     byId('explain-preview').classList.remove('hidden');
