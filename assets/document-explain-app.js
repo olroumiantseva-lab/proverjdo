@@ -1,0 +1,47 @@
+(() => {
+  'use strict';
+  const STORAGE_KEY='proverjdo.explain.v1';
+  const RESULT_ORDER_KEY='proverjdo.result.order_id';
+  const PRODUCT_ID='document_explain_once_290';
+  const byId=(id)=>document.getElementById(id);
+  const config=window.__SUPABASE_CONFIG__||{};
+  const save=(v)=>sessionStorage.setItem(STORAGE_KEY,JSON.stringify(v));
+  const load=()=>{try{return JSON.parse(sessionStorage.getItem(STORAGE_KEY)||'null')}catch{return null}};
+  async function callFunction(name,body){
+    const response=await fetch(`${config.url}/functions/v1/${name}`,{method:'POST',headers:{'Content-Type':'application/json',...(config.publishableKey?{apikey:config.publishableKey}:{})},body:JSON.stringify(body)});
+    const raw=await response.text();let data={};try{data=raw?JSON.parse(raw):{}}catch{data={message:raw||`HTTP ${response.status}`}}
+    if(!response.ok){const e=new Error(data.message||`HTTP ${response.status}`);e.code=data.error||`HTTP_${response.status}`;throw e}return data;
+  }
+  function renderPreview(data){
+    byId('explain-document-type').textContent=data.document_type||'Документ';
+    byId('explain-summary').textContent=data.summary||'Краткая оценка готова.';
+    byId('explain-counts').textContent=`Действий: ${Number(data.actions_count||0)} · важных пунктов: ${Number(data.important_count||0)}`;
+    const first=Array.isArray(data.important_points)?data.important_points[0]:null;
+    byId('explain-first-title').textContent=first?.title||'Что важно';
+    byId('explain-first-text').textContent=first?.explanation||'Полный разбор покажет детали документа.';
+    byId('explain-first-action').textContent=first?.action||'Откройте полный разбор, чтобы увидеть действия и вопросы.';
+    byId('explain-preview').classList.remove('hidden');
+    byId('document-explain-form').classList.add('hidden');
+  }
+  function setupExplain(){
+    const form=byId('document-explain-form');if(!form)return;
+    const source=byId('source-text'),error=byId('explain-error'),button=form.querySelector('button[type="submit"]');
+    const cached=load();if(cached?.run_id&&cached?.preview)renderPreview(cached.preview);
+    form.addEventListener('submit',async(event)=>{
+      event.preventDefault();if(!form.reportValidity())return;
+      const text=source?.value?.trim()||'';if(!text){error.textContent='Сначала загрузите PDF, DOCX или TXT с текстовым слоем.';return}
+      error.textContent='';button.disabled=true;button.textContent='Разбираем документ…';
+      try{const goal=String(new FormData(form).get('goal')||'simple');const data=await callFunction(config.documentExplainScanFunction||'document-explain-scan',{source_text:text,goal});if(!data.run_id)throw new Error('RUN_ID_MISSING');save({source_text:text,goal,run_id:data.run_id,preview:data,expires_at:data.expires_at});renderPreview(data)}catch(e){error.textContent=e?.code==='RATE_LIMIT'?'Лимит бесплатных разборов исчерпан. Попробуйте позже.':`Не удалось разобрать документ: ${e?.message||'ошибка сервиса'}`;button.disabled=false;button.textContent='Получить бесплатную оценку'}
+    });
+    byId('explain-new')?.addEventListener('click',()=>{sessionStorage.removeItem(STORAGE_KEY);location.reload()});
+  }
+  function setupPayment(){
+    const form=byId('document-explain-payment-form');if(!form)return;const error=byId('explain-payment-error'),button=form.querySelector('button[type="submit"]');
+    form.addEventListener('submit',async(event)=>{event.preventDefault();if(!form.reportValidity())return;const draft=load();if(!draft?.run_id){error.textContent='Сначала выполните бесплатную оценку документа.';return}button.disabled=true;error.textContent='';try{const email=String(new FormData(form).get('email')||'').trim().toLowerCase();const data=await callFunction(config.documentPaymentFunction||'create-payment',{product_id:PRODUCT_ID,source_site:'proverjdo',resource_id:draft.run_id,email});if(!data.payment_url)throw new Error('PAYMENT_URL_MISSING');sessionStorage.setItem('proverjdo.payment.v1',JSON.stringify({order_id:data.order_id,product_id:PRODUCT_ID,run_id:draft.run_id,email,next:'explain'}));localStorage.setItem(RESULT_ORDER_KEY,String(data.order_id));location.assign(data.payment_url)}catch(e){error.textContent=`Не удалось создать оплату: ${e?.message||'ошибка сервиса'}`;button.disabled=false}});
+  }
+  const loadSdk=()=>new Promise((resolve,reject)=>{if(window.supabase)return resolve();const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';s.crossOrigin='anonymous';s.onload=resolve;s.onerror=()=>reject(new Error('SDK_LOAD_FAILED'));document.head.append(s)});
+  function fillList(id,values,empty='Не найдено'){const node=byId(id);if(!node)return;node.replaceChildren();for(const value of Array.isArray(values)?values:[]){const li=document.createElement('li');li.textContent=String(value);node.append(li)}if(!node.children.length){const li=document.createElement('li');li.textContent=empty;node.append(li)}}
+  function renderPaid(data){const r=data.result||{};byId('explain-result-type').textContent=r.document_type||'Документ';byId('explain-result-summary').textContent=r.summary||'Разбор завершён.';byId('explain-result-meaning').textContent=r.what_it_means||'';fillList('explain-result-actions',r.actions,'Обязательных действий не найдено.');fillList('explain-result-deadlines',r.deadlines,'Явных сроков не найдено.');fillList('explain-result-money',r.money,'Денежных условий не найдено.');fillList('explain-result-questions',r.questions,'Дополнительных вопросов не требуется.');const box=byId('explain-result-important');box.replaceChildren();for(const [i,item] of (Array.isArray(r.important_points)?r.important_points:[]).entries()){const card=document.createElement('article');card.className='risk-card paid-risk-card';const head=document.createElement('div');head.className='paid-risk-head';const n=document.createElement('span');n.className='risk-number';n.textContent=`Пункт №${i+1}`;const h=document.createElement('h3');h.textContent=item.title||'Важный пункт';head.append(n,h);const p=document.createElement('p');p.textContent=item.explanation||'';const a=document.createElement('p');const strong=document.createElement('strong');strong.textContent='Что сделать. ';a.append(strong,document.createTextNode(item.action||''));card.append(head,p,a);box.append(card)}if(!box.children.length){const p=document.createElement('div');p.className='panel';p.textContent='Отдельных важных пунктов не найдено.';box.append(p)}byId('explain-result-status').classList.add('hidden');byId('explain-result-content').classList.remove('hidden')}
+  async function setupPaidResult(){if(document.body.dataset.page!=='explain-paid-result')return;const status=byId('explain-result-status'),error=byId('explain-result-error');try{await loadSdk();const client=window.supabase.createClient(config.url,config.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});const q=new URLSearchParams(location.search);let orderId=q.get('order_id')||q.get('InvId');if(!orderId){try{orderId=localStorage.getItem(RESULT_ORDER_KEY)}catch{}}if(!orderId||!/^\d+$/.test(orderId))throw new Error('ORDER_NOT_FOUND');localStorage.setItem(RESULT_ORDER_KEY,orderId);const{data:{session}}=await client.auth.getSession();if(!session){location.replace(`../login/?order_id=${encodeURIComponent(orderId)}&next=explain`);return}const{data,error:invokeError}=await client.functions.invoke(config.documentExplainResultFunction||'document-explain-result',{body:{order_id:Number(orderId)}});if(invokeError||!data?.result)throw new Error(invokeError?.context?.json?.message||'RESULT_NOT_FOUND');history.replaceState({},document.title,`${location.pathname}?order_id=${encodeURIComponent(orderId)}`);try{localStorage.removeItem(RESULT_ORDER_KEY)}catch{}renderPaid(data)}catch(e){status?.classList.add('hidden');if(error){error.textContent=e?.message==='ORDER_NOT_FOUND'?'Не удалось определить оплаченный заказ.':'Не удалось открыть полный разбор. Войдите с той же почтой, которую указали при оплате.';error.classList.remove('hidden')}}}
+  setupExplain();setupPayment();setupPaidResult();
+})();
