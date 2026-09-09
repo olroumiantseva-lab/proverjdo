@@ -23,7 +23,17 @@
       }
     }
 
-    document.getElementById('contract-payment-form')?.addEventListener('submit',()=>goal('payment_started'));
+    const paymentForm=document.getElementById('contract-payment-form');
+    if(paymentForm){
+      let lastPaymentSubmitAt=0;
+      paymentForm.addEventListener('submit',()=>{
+        const now=Date.now();
+        if(now-lastPaymentSubmitAt<1500)return;
+        lastPaymentSubmitAt=now;
+        goal('payment_started');
+      });
+    }
+
     document.getElementById('proverjdo-login-form')?.addEventListener('submit',()=>goal('login_started'));
 
     if(document.body.dataset.page==='paid-result'){
