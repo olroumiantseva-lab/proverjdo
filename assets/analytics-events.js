@@ -8,6 +8,18 @@
   };
 
   document.addEventListener('DOMContentLoaded',()=>{
+    try{
+      const raw=sessionStorage.getItem('proverjdo.payment_success.pending');
+      if(raw){
+        const data=JSON.parse(raw);
+        const fresh=Number(data?.ts||0)>Date.now()-15*60*1000;
+        if(fresh&&/^\d+$/.test(String(data?.order_id||''))){
+          goal('payment_success',{order_id:String(data.order_id),product_id:data.product_id||undefined});
+        }
+        sessionStorage.removeItem('proverjdo.payment_success.pending');
+      }
+    }catch{}
+
     if(document.body.dataset.page==='scan'){
       once('scan_started');
       const content=document.getElementById('scan-content');
