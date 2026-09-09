@@ -6,5 +6,7 @@ Disallow: /login/
 Disallow: /result/
 Disallow: /explain/
 Disallow: /explain-result/
+Disallow: /letter/
+Disallow: /letter-result/
 
 Sitemap: https://proverjdo.ru/sitemap.xml
