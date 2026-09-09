@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /check/
+Disallow: /scan/
+Disallow: /login/
+Disallow: /result/
+
+Sitemap: https://proverjdo.ru/sitemap.xml
