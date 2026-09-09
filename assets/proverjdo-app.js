@@ -87,6 +87,13 @@
 
   const loadSdk=()=>new Promise((resolve,reject)=>{if(window.supabase)return resolve();const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';s.crossOrigin='anonymous';s.onload=resolve;s.onerror=()=>reject(new Error('SDK_LOAD_FAILED'));document.head.append(s)});
 
+  async function sendMagicLink(email,redirectTo){
+    const endpoint=`${config.url}/auth/v1/otp?redirect_to=${encodeURIComponent(redirectTo)}`;
+    const debug=byId('auth-debug-request'); if(debug)debug.textContent=`Фактический запрос Supabase: redirect_to=${redirectTo}`;
+    const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json',apikey:config.publishableKey,Authorization:`Bearer ${config.publishableKey}`},body:JSON.stringify({email,create_user:false})});
+    if(!response.ok){let payload={};try{payload=await response.json()}catch{}const e=new Error(payload.msg||payload.message||`HTTP ${response.status}`);e.status=response.status;throw e;}
+  }
+
   async function setupProverjdoLogin(){
     if(document.body.dataset.page!=='proverjdo-login')return;
     const query=new URLSearchParams(location.search),orderId=query.get('order_id');
@@ -102,10 +109,9 @@
       form?.addEventListener('submit',async(event)=>{
         event.preventDefault();if(!form.reportValidity())return;
         error?.classList.add('hidden');const button=form.querySelector('button[type="submit"]');button.disabled=true;
-        const resultUrl=new URL('/result/',location.origin);
-        const{error:authError}=await client.auth.signInWithOtp({email:email.value.trim().toLowerCase(),options:{emailRedirectTo:resultUrl.toString(),shouldCreateUser:false}});
+        const resultUrl=new URL('/result/',location.origin).toString();
+        try{await sendMagicLink(email.value.trim().toLowerCase(),resultUrl)}catch(authError){button.disabled=false;if(error){error.textContent=`Не удалось отправить ссылку: ${authError?.message||'ошибка авторизации'}`;error.classList.remove('hidden')}return;}
         button.disabled=false;
-        if(authError){if(error){error.textContent='Не удалось отправить ссылку. Проверьте адрес и попробуйте ещё раз.';error.classList.remove('hidden')}return;}
         form.classList.add('hidden');success?.classList.remove('hidden');success?.focus();
       });
     }catch{const error=byId('proverjdo-login-error');if(error){error.textContent='Не удалось загрузить вход. Обновите страницу.';error.classList.remove('hidden')}}
