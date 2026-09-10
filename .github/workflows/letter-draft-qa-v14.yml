@@ -1,0 +1,21 @@
+name: Letter Draft QA v14
+on:
+  push:
+    paths:
+      - '.github/workflows/letter-draft-qa-v14.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run QA matrix
+        run: |
+          curl --fail-with-body --silent --show-error 'https://vhssshjcrirsuiijolwq.supabase.co/functions/v1/letter-draft-qa?token=qa_v14_9a31c774f62d4b568da2' -o qa-results.json
+          python - <<'PY'
+          import json
+          with open('qa-results.json', encoding='utf-8') as f:
+              data=json.load(f)
+          print(json.dumps(data, ensure_ascii=False))
+          PY
