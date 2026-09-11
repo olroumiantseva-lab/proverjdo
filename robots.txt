@@ -11,7 +11,6 @@ Disallow: /letter/
 Disallow: /letter-result/
 Disallow: /compose/
 Disallow: /compose-result/
-Disallow: /situation-analysis/
 Disallow: /situation-result/
 
 Sitemap: https://proverjdo.ru/sitemap.xml
