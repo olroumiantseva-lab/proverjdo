@@ -11,4 +11,5 @@ window.__SUPABASE_CONFIG__ = {
   letterDraftScanFunction: "letter-draft-scan",
   letterPaymentFunction: "create-payment",
   letterDraftResultFunction: "letter-draft-result",
+  adminOpenAIStatusFunction: "admin-openai-status",
 };
