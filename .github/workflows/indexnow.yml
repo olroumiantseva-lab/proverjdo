@@ -1,0 +1,75 @@
+name: IndexNow
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  notify-yandex:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Submit changed pages to Yandex IndexNow
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          KEY="40e38bf0c1dba0c93cced46242f4b47d"
+          HOST="proverjdo.ru"
+          ENDPOINT="https://yandex.com/indexnow"
+
+          urls=()
+
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            while IFS= read -r file; do
+              case "$file" in
+                index.html)
+                  urls+=("https://${HOST}/")
+                  ;;
+                */index.html)
+                  dir="${file%/index.html}"
+                  urls+=("https://${HOST}/${dir}/")
+                  ;;
+              esac
+            done < <(git diff --name-only HEAD^ HEAD)
+          fi
+
+          # First setup run: seed the current SEO cluster if no HTML page changed.
+          if [ ${#urls[@]} -eq 0 ]; then
+            urls=(
+              "https://${HOST}/sostavit-pretenziyu-online/"
+              "https://${HOST}/pretenziya-postavshchiku/"
+              "https://${HOST}/pretenziya-o-narushenii-srokov-postavki/"
+              "https://${HOST}/pretenziya-po-dogovoru-okazaniya-uslug/"
+              "https://${HOST}/otvet-na-pretenziyu/"
+            )
+          fi
+
+          # De-duplicate URLs.
+          mapfile -t urls < <(printf '%s\n' "${urls[@]}" | awk '!seen[$0]++')
+
+          # Give GitHub Pages a short window to publish the key/page changes.
+          sleep 30
+
+          failed=0
+          for url in "${urls[@]}"; do
+            echo "Submitting: $url"
+            code=$(curl -sS -o /tmp/indexnow-response.txt -w '%{http_code}' \
+              --get "$ENDPOINT" \
+              --data-urlencode "url=$url" \
+              --data-urlencode "key=$KEY" || true)
+            echo "HTTP $code"
+            cat /tmp/indexnow-response.txt || true
+            echo
+
+            # 200 = accepted; 202 = key accepted but still being verified.
+            if [ "$code" != "200" ] && [ "$code" != "202" ]; then
+              failed=1
+            fi
+          done
+
+          exit "$failed"
