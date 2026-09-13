@@ -28,18 +28,19 @@
   if(path==='/check/') window.proverjdoGoal('check_start');
 
   const imagePages={
-    '/pretenziya-postavshchiku/':'pretenziya-postavshchiku',
-    '/pretenziya-o-narushenii-srokov-postavki/':'pretenziya-o-narushenii-srokov-postavki',
-    '/pretenziya-po-dogovoru-okazaniya-uslug/':'pretenziya-po-dogovoru-okazaniya-uslug',
-    '/otvet-na-pretenziyu/':'otvet-na-pretenziyu',
-    '/sostavit-dogovor-online/':'sostavit-dogovor-online',
-    '/dogovor-okazaniya-uslug/':'dogovor-okazaniya-uslug',
-    '/dogovor-podryada/':'dogovor-podryada',
-    '/dogovor-postavki/':'dogovor-postavki',
-    '/dop-soglashenie-k-dogovoru/':'dop-soglashenie-k-dogovoru'
+    '/sostavit-pretenziyu-online/':{slug:'sostavit-pretenziyu-online',hero:'Сергей разбирает документы перед подготовкой претензии',inside:'Сергей изучает документы за домашним столом'},
+    '/pretenziya-postavshchiku/':{slug:'pretenziya-postavshchiku',hero:'Сергей разбирает документы по спорной поставке',inside:'Сергей проверяет документы и условия поставки'},
+    '/pretenziya-o-narushenii-srokov-postavki/':{slug:'pretenziya-o-narushenii-srokov-postavki',hero:'Сергей проверяет сроки поставки по документам',inside:'Сергей разбирает ситуацию с задержкой поставки'},
+    '/pretenziya-po-dogovoru-okazaniya-uslug/':{slug:'pretenziya-po-dogovoru-okazaniya-uslug',hero:'Сергей изучает договор оказания услуг и документы',inside:'Сергей проверяет документы по оказанным услугам'},
+    '/otvet-na-pretenziyu/':{slug:'otvet-na-pretenziyu',hero:'Сергей читает полученную претензию',inside:'Сергей готовит ответ на претензию по документам'},
+    '/sostavit-dogovor-online/':{slug:'sostavit-dogovor-online',hero:'Сергей готовит договор по реальной договорённости',inside:'Сергей собирает условия будущего договора'},
+    '/dogovor-okazaniya-uslug/':{slug:'dogovor-okazaniya-uslug',hero:'Сергей разбирает условия договора оказания услуг',inside:'Сергей проверяет объём услуг, сроки и результат'},
+    '/dogovor-podryada/':{slug:'dogovor-podryada',hero:'Сергей разбирает условия договора подряда',inside:'Сергей сверяет план ремонта, материалы и условия подряда'},
+    '/dogovor-postavki/':{slug:'dogovor-postavki',hero:'Сергей изучает условия договора поставки',inside:'Сергей проверяет поставку, документы и комплектность'},
+    '/dop-soglashenie-k-dogovoru/':{slug:'dop-soglashenie-k-dogovoru',hero:'Сергей сравнивает действующий договор и новые условия',inside:'Сергей проверяет изменения для дополнительного соглашения'}
   };
 
-  window.proverjdoSeoImages=(heroAlt,insideAlt,heroBase64,insideBase64)=>{
+  const addSeoImages=(config)=>{
     if(!document.getElementById('seo-image-style')){
       const style=document.createElement('style');
       style.id='seo-image-style';
@@ -47,54 +48,54 @@
       document.head.appendChild(style);
     }
 
-    const dataSrc=base64=>`data:image/webp;base64,${base64}`;
-    const makeImage=(base64,alt,className,lazy)=>{
+    const makeImage=(src,alt,className,lazy,width,height)=>{
       const img=document.createElement('img');
       img.className=`story-photo ${className}`;
-      img.src=dataSrc(base64);
+      img.src=src;
       img.alt=alt;
-      img.width=240;
-      img.height=135;
+      img.width=width;
+      img.height=height;
       img.decoding='async';
       if(lazy) img.loading='lazy';
       else img.fetchPriority='high';
       return img;
     };
 
+    const heroSrc=`/assets/seo-images/${config.slug}-hero.webp`;
+    const insideSrc=`/assets/seo-images/${config.slug}-inside.webp`;
     const heroGrid=document.querySelector('.story-hero-grid');
     const existingHero=heroGrid&&heroGrid.querySelector('.story-hero-photo');
     if(existingHero){
-      existingHero.src=dataSrc(heroBase64);
-      existingHero.alt=heroAlt;
+      existingHero.src=heroSrc;
+      existingHero.alt=config.hero;
+      existingHero.width=1280;
+      existingHero.height=720;
+      existingHero.fetchPriority='high';
     } else if(heroGrid){
       const aside=heroGrid.querySelector(':scope > aside.sergey-card');
       if(aside){
         const side=document.createElement('div');
         side.className='story-hero-side';
         heroGrid.insertBefore(side,aside);
-        side.append(makeImage(heroBase64,heroAlt,'story-hero-photo',false),aside);
+        side.append(makeImage(heroSrc,config.hero,'story-hero-photo',false,1280,720),aside);
       }
     }
 
     const existingInside=document.querySelector('.story-inline-photo');
     if(existingInside){
-      existingInside.src=dataSrc(insideBase64);
-      existingInside.alt=insideAlt;
+      existingInside.src=insideSrc;
+      existingInside.alt=config.inside;
+      existingInside.width=960;
+      existingInside.height=540;
       existingInside.loading='lazy';
     } else {
       const section=[...document.querySelectorAll('.story-section .narrow')].find(el=>el.querySelector('h2'));
       const heading=section&&section.querySelector('h2');
       if(section&&heading){
-        heading.insertAdjacentElement('afterend',makeImage(insideBase64,insideAlt,'story-inline-photo',true));
+        heading.insertAdjacentElement('afterend',makeImage(insideSrc,config.inside,'story-inline-photo',true,960,540));
       }
     }
   };
 
-  const imageSlug=imagePages[path];
-  if(imageSlug){
-    const script=document.createElement('script');
-    script.src=`/assets/seo-images/${imageSlug}.js?v=20260913-2`;
-    script.async=true;
-    document.head.appendChild(script);
-  }
+  if(imagePages[path]) addSeoImages(imagePages[path]);
 })();
