@@ -47,10 +47,11 @@
       document.head.appendChild(style);
     }
 
+    const dataSrc=base64=>`data:image/webp;base64,${base64}`;
     const makeImage=(base64,alt,className,lazy)=>{
       const img=document.createElement('img');
       img.className=`story-photo ${className}`;
-      img.src=`data:image/webp;base64,${base64}`;
+      img.src=dataSrc(base64);
       img.alt=alt;
       img.width=240;
       img.height=135;
@@ -61,7 +62,11 @@
     };
 
     const heroGrid=document.querySelector('.story-hero-grid');
-    if(heroGrid && !heroGrid.querySelector('.story-hero-photo')){
+    const existingHero=heroGrid&&heroGrid.querySelector('.story-hero-photo');
+    if(existingHero){
+      existingHero.src=dataSrc(heroBase64);
+      existingHero.alt=heroAlt;
+    } else if(heroGrid){
       const aside=heroGrid.querySelector(':scope > aside.sergey-card');
       if(aside){
         const side=document.createElement('div');
@@ -71,7 +76,12 @@
       }
     }
 
-    if(!document.querySelector('.story-inline-photo')){
+    const existingInside=document.querySelector('.story-inline-photo');
+    if(existingInside){
+      existingInside.src=dataSrc(insideBase64);
+      existingInside.alt=insideAlt;
+      existingInside.loading='lazy';
+    } else {
       const section=[...document.querySelectorAll('.story-section .narrow')].find(el=>el.querySelector('h2'));
       const heading=section&&section.querySelector('h2');
       if(section&&heading){
@@ -83,7 +93,7 @@
   const imageSlug=imagePages[path];
   if(imageSlug){
     const script=document.createElement('script');
-    script.src=`/assets/seo-images/${imageSlug}.js?v=20260913-1`;
+    script.src=`/assets/seo-images/${imageSlug}.js?v=20260913-2`;
     script.async=true;
     document.head.appendChild(script);
   }
