@@ -1,0 +1,1 @@
+Optimized SEO illustrations for contract and claim pages. WebP originals are published in the same directory.
