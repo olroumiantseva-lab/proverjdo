@@ -38,7 +38,7 @@ jobs:
             done < <(git diff --name-only HEAD^ HEAD)
           fi
 
-          # First setup run: seed the current SEO cluster if no HTML page changed.
+          # If no HTML page changed, seed both current SEO clusters.
           if [ ${#urls[@]} -eq 0 ]; then
             urls=(
               "https://${HOST}/sostavit-pretenziyu-online/"
@@ -46,6 +46,11 @@ jobs:
               "https://${HOST}/pretenziya-o-narushenii-srokov-postavki/"
               "https://${HOST}/pretenziya-po-dogovoru-okazaniya-uslug/"
               "https://${HOST}/otvet-na-pretenziyu/"
+              "https://${HOST}/sostavit-dogovor-online/"
+              "https://${HOST}/dogovor-okazaniya-uslug/"
+              "https://${HOST}/dogovor-podryada/"
+              "https://${HOST}/dogovor-postavki/"
+              "https://${HOST}/dop-soglashenie-k-dogovoru/"
             )
           fi
 
