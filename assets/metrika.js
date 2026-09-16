@@ -28,11 +28,6 @@
   if(path==='/check/') window.proverjdoGoal('check_start');
 
   const imagePages={
-    '/sostavit-pretenziyu-online/':{slug:'sostavit-pretenziyu-online',hero:'Сергей разбирает документы перед подготовкой претензии',inside:'Сергей изучает документы за домашним столом'},
-    '/pretenziya-postavshchiku/':{slug:'pretenziya-postavshchiku',hero:'Сергей разбирает документы по спорной поставке',inside:'Сергей проверяет документы и условия поставки'},
-    '/pretenziya-o-narushenii-srokov-postavki/':{slug:'pretenziya-o-narushenii-srokov-postavki',hero:'Сергей проверяет сроки поставки по документам',inside:'Сергей разбирает ситуацию с задержкой поставки'},
-    '/pretenziya-po-dogovoru-okazaniya-uslug/':{slug:'pretenziya-po-dogovoru-okazaniya-uslug',hero:'Сергей изучает договор оказания услуг и документы',inside:'Сергей проверяет документы по оказанным услугам'},
-    '/otvet-na-pretenziyu/':{slug:'otvet-na-pretenziyu',hero:'Сергей читает полученную претензию',inside:'Сергей готовит ответ на претензию по документам'},
     '/sostavit-dogovor-online/':{slug:'sostavit-dogovor-online',hero:'Сергей готовит договор по реальной договорённости',inside:'Сергей собирает условия будущего договора'},
     '/dogovor-okazaniya-uslug/':{slug:'dogovor-okazaniya-uslug',hero:'Сергей разбирает условия договора оказания услуг',inside:'Сергей проверяет объём услуг, сроки и результат'},
     '/dogovor-podryada/':{slug:'dogovor-podryada',hero:'Сергей разбирает условия договора подряда',inside:'Сергей сверяет план ремонта, материалы и условия подряда'},
