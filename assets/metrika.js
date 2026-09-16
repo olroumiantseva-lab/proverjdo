@@ -28,10 +28,6 @@
   if(path==='/check/') window.proverjdoGoal('check_start');
 
   const imagePages={
-    '/sostavit-dogovor-online/':{slug:'sostavit-dogovor-online',hero:'Сергей готовит договор по реальной договорённости',inside:'Сергей собирает условия будущего договора'},
-    '/dogovor-okazaniya-uslug/':{slug:'dogovor-okazaniya-uslug',hero:'Сергей разбирает условия договора оказания услуг',inside:'Сергей проверяет объём услуг, сроки и результат'},
-    '/dogovor-podryada/':{slug:'dogovor-podryada',hero:'Сергей разбирает условия договора подряда',inside:'Сергей сверяет план ремонта, материалы и условия подряда'},
-    '/dogovor-postavki/':{slug:'dogovor-postavki',hero:'Сергей изучает условия договора поставки',inside:'Сергей проверяет поставку, документы и комплектность'},
     '/dop-soglashenie-k-dogovoru/':{slug:'dop-soglashenie-k-dogovoru',hero:'Сергей сравнивает действующий договор и новые условия',inside:'Сергей проверяет изменения для дополнительного соглашения'}
   };
 
