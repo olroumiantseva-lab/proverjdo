@@ -98,4 +98,30 @@
   };
 
   if(imagePages[path]) addSeoImages(imagePages[path]);
+
+  const letterCluster={
+    '/delovoe-pismo-online/':{title:'Деловое письмо онлайн',text:'Общий сценарий: определить цель письма, собрать факты и выбрать нужный формат.'},
+    '/pismo-postavshchiku/':{title:'Письмо поставщику',text:'Поставка, товар, счёт, характеристики, документы или ответ поставщика.'},
+    '/pismo-o-narushenii-srokov/':{title:'Письмо о нарушении сроков',text:'Срок уже прошёл и нужно получить конкретный статус и новую дату.'},
+    '/zapros-dokumentov-u-kontragenta/':{title:'Запрос документов у контрагента',text:'Акты, УПД, счета, сертификаты, спецификации и другие документы по сделке.'},
+    '/otvet-na-delovoe-pismo/':{title:'Ответ на деловое письмо',text:'Контрагент уже написал и нужно спокойно ответить по пунктам.'}
+  };
+
+  const addLetterClusterLinks=()=>{
+    if(!letterCluster[path] || document.getElementById('letter-cluster-links')) return;
+    const main=document.querySelector('main');
+    if(!main) return;
+    const section=document.createElement('section');
+    section.id='letter-cluster-links';
+    section.className='story-section alt';
+    section.setAttribute('aria-label','Другие материалы о деловых письмах');
+    const cards=Object.entries(letterCluster)
+      .filter(([url])=>url!==path)
+      .map(([url,item])=>`<a class="story-link" href="${url}"><strong>${item.title}</strong><span>${item.text}</span></a>`)
+      .join('');
+    section.innerHTML=`<div class="narrow"><p class="story-kicker">Деловые письма</p><h2>Другие сценарии</h2><div class="story-links">${cards}</div></div>`;
+    main.appendChild(section);
+  };
+
+  addLetterClusterLinks();
 })();
