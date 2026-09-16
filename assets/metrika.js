@@ -37,9 +37,7 @@
     '/dogovor-okazaniya-uslug/':{slug:'dogovor-okazaniya-uslug',hero:'Сергей разбирает условия договора оказания услуг',inside:'Сергей проверяет объём услуг, сроки и результат'},
     '/dogovor-podryada/':{slug:'dogovor-podryada',hero:'Сергей разбирает условия договора подряда',inside:'Сергей сверяет план ремонта, материалы и условия подряда'},
     '/dogovor-postavki/':{slug:'dogovor-postavki',hero:'Сергей изучает условия договора поставки',inside:'Сергей проверяет поставку, документы и комплектность'},
-    '/dop-soglashenie-k-dogovoru/':{slug:'dop-soglashenie-k-dogovoru',hero:'Сергей сравнивает действующий договор и новые условия',inside:'Сергей проверяет изменения для дополнительного соглашения'},
-    '/delovoe-pismo-online/':{slug:'delovoe-pismo-online',hero:'Сергей разбирает документы перед подготовкой делового письма',inside:'Документы и ноутбук для подготовки делового письма'},
-    '/otvet-na-delovoe-pismo/':{slug:'otvet-na-delovoe-pismo',hero:'Сергей изучает полученное деловое письмо перед ответом',inside:'Рабочее место для подготовки ответа на деловое письмо'}
+    '/dop-soglashenie-k-dogovoru/':{slug:'dop-soglashenie-k-dogovoru',hero:'Сергей сравнивает действующий договор и новые условия',inside:'Сергей проверяет изменения для дополнительного соглашения'}
   };
 
   const addSeoImages=(config)=>{
@@ -100,30 +98,4 @@
   };
 
   if(imagePages[path]) addSeoImages(imagePages[path]);
-
-  const letterCluster={
-    '/delovoe-pismo-online/':{title:'Деловое письмо онлайн',text:'Общий сценарий: определить цель письма, собрать факты и выбрать нужный формат.'},
-    '/pismo-postavshchiku/':{title:'Письмо поставщику',text:'Поставка, товар, счёт, характеристики, документы или ответ поставщика.'},
-    '/pismo-o-narushenii-srokov/':{title:'Письмо о нарушении сроков',text:'Срок уже прошёл и нужно получить конкретный статус и новую дату.'},
-    '/zapros-dokumentov-u-kontragenta/':{title:'Запрос документов у контрагента',text:'Акты, УПД, счета, сертификаты, спецификации и другие документы по сделке.'},
-    '/otvet-na-delovoe-pismo/':{title:'Ответ на деловое письмо',text:'Контрагент уже написал и нужно спокойно ответить по пунктам.'}
-  };
-
-  const addLetterClusterLinks=()=>{
-    if(!letterCluster[path] || document.getElementById('letter-cluster-links')) return;
-    const main=document.querySelector('main');
-    if(!main) return;
-    const section=document.createElement('section');
-    section.id='letter-cluster-links';
-    section.className='story-section alt';
-    section.setAttribute('aria-label','Другие материалы о деловых письмах');
-    const cards=Object.entries(letterCluster)
-      .filter(([url])=>url!==path)
-      .map(([url,item])=>`<a class="story-link" href="${url}"><strong>${item.title}</strong><span>${item.text}</span></a>`)
-      .join('');
-    section.innerHTML=`<div class="narrow"><p class="story-kicker">Деловые письма</p><h2>Другие сценарии</h2><div class="story-links">${cards}</div></div>`;
-    main.appendChild(section);
-  };
-
-  addLetterClusterLinks();
 })();
