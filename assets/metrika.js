@@ -37,7 +37,9 @@
     '/dogovor-okazaniya-uslug/':{slug:'dogovor-okazaniya-uslug',hero:'Сергей разбирает условия договора оказания услуг',inside:'Сергей проверяет объём услуг, сроки и результат'},
     '/dogovor-podryada/':{slug:'dogovor-podryada',hero:'Сергей разбирает условия договора подряда',inside:'Сергей сверяет план ремонта, материалы и условия подряда'},
     '/dogovor-postavki/':{slug:'dogovor-postavki',hero:'Сергей изучает условия договора поставки',inside:'Сергей проверяет поставку, документы и комплектность'},
-    '/dop-soglashenie-k-dogovoru/':{slug:'dop-soglashenie-k-dogovoru',hero:'Сергей сравнивает действующий договор и новые условия',inside:'Сергей проверяет изменения для дополнительного соглашения'}
+    '/dop-soglashenie-k-dogovoru/':{slug:'dop-soglashenie-k-dogovoru',hero:'Сергей сравнивает действующий договор и новые условия',inside:'Сергей проверяет изменения для дополнительного соглашения'},
+    '/delovoe-pismo-online/':{slug:'delovoe-pismo-online',hero:'Сергей разбирает документы перед подготовкой делового письма',inside:'Документы и ноутбук для подготовки делового письма'},
+    '/otvet-na-delovoe-pismo/':{slug:'otvet-na-delovoe-pismo',hero:'Сергей изучает полученное деловое письмо перед ответом',inside:'Рабочее место для подготовки ответа на деловое письмо'}
   };
 
   const addSeoImages=(config)=>{
