@@ -1,0 +1,49 @@
+# Проверь до
+
+> Онлайн-сервисы для работы с документами: понять документ, проверить договор, подготовить претензию или деловое письмо, составить договор, акт или соглашение и разобрать сложную ситуацию.
+
+## Основные сервисы
+- https://proverjdo.ru/obyasnit-dokument/ — объяснить документ простыми словами
+- https://proverjdo.ru/proverit-dogovor/ — проверить договор перед подписанием
+- https://proverjdo.ru/podgotovit-pismo/ — подготовить деловое письмо
+- https://proverjdo.ru/sostavit-dokument/ — составить или отредактировать документ
+- https://proverjdo.ru/situation-analysis/ — разобрать ситуацию по нескольким документам
+
+## Претензии
+- https://proverjdo.ru/sostavit-pretenziyu-online/
+- https://proverjdo.ru/pretenziya-postavshchiku/
+- https://proverjdo.ru/pretenziya-o-narushenii-srokov-postavki/
+- https://proverjdo.ru/pretenziya-po-dogovoru-okazaniya-uslug/
+- https://proverjdo.ru/otvet-na-pretenziyu/
+
+## Договоры и изменения
+- https://proverjdo.ru/sostavit-dogovor-online/
+- https://proverjdo.ru/dogovor-okazaniya-uslug/
+- https://proverjdo.ru/dogovor-podryada/
+- https://proverjdo.ru/dogovor-postavki/
+- https://proverjdo.ru/dop-soglashenie-k-dogovoru/
+- https://proverjdo.ru/izmenenie-usloviy-dogovora/
+- https://proverjdo.ru/rastorzhenie-dogovora/
+- https://proverjdo.ru/soglashenie-o-rastorzhenii-dogovora/
+- https://proverjdo.ru/uvedomlenie-o-rastorzhenii-dogovora/
+
+## Акты
+- https://proverjdo.ru/akt-vypolnennykh-rabot/
+- https://proverjdo.ru/akt-okazannykh-uslug/
+- https://proverjdo.ru/akt-priema-peredachi/
+- https://proverjdo.ru/akt-priemki-vypolnennykh-rabot/
+- https://proverjdo.ru/motivirovannyy-otkaz-ot-podpisaniya-akta/
+
+## Деловая переписка
+- https://proverjdo.ru/delovoe-pismo-online/
+- https://proverjdo.ru/pismo-postavshchiku/
+- https://proverjdo.ru/pismo-o-narushenii-srokov/
+- https://proverjdo.ru/zapros-dokumentov-u-kontragenta/
+- https://proverjdo.ru/otvet-na-delovoe-pismo/
+
+## Индексация
+- Sitemap: https://proverjdo.ru/sitemap.xml
+- Robots: https://proverjdo.ru/robots.txt
+
+## Важно
+Материалы и автоматизированные результаты сервиса носят информационный характер и не являются юридической консультацией или гарантией результата.
