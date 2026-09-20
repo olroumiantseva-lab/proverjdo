@@ -55,6 +55,7 @@
 
     watchVisible('letter-preview','paywall_view',{product:'letter'});
     watchVisible('compose-preview','paywall_view',{product:'document'});
+    watchVisible('explain-preview','paywall_view',{product:'explain'});
 
     trackPaymentForm('contract-payment-form','document_check');
 
@@ -74,6 +75,7 @@
 
     const paidResults=[
       ['result-content','document_check'],
+      ['explain-result-content','explain'],
       ['letter-result-content','letter'],
       ['compose-result-content','document'],
       ['situation-result-content','situation']
