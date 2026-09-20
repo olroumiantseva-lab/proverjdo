@@ -42,7 +42,9 @@
   const productAliases={
     letter_draft_390:'letter',
     document_revision_590:'document',
-    situation_analysis_1490:'situation'
+    situation_analysis_1490:'situation',
+    contract_check_490:'document_check',
+    document_explain_once_290:'explain'
   };
   const normalizeProduct=value=>productAliases[value]||value||'';
   const readAttribution=product=>{
