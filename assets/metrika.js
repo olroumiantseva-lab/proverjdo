@@ -19,8 +19,41 @@
     trackLinks:true,
   });
 
+  const ATTR_PREFIX='proverjdo.attribution.';
+  const productAliases={
+    letter_draft_390:'letter',
+    document_revision_590:'document',
+    situation_analysis_1490:'situation'
+  };
+  const normalizeProduct=value=>productAliases[value]||value||'';
+  const readAttribution=product=>{
+    if(!product)return null;
+    try{
+      const raw=localStorage.getItem(ATTR_PREFIX+product);
+      if(!raw)return null;
+      const data=JSON.parse(raw);
+      if(!data||Number(data.ts||0)<Date.now()-24*60*60*1000){
+        localStorage.removeItem(ATTR_PREFIX+product);
+        return null;
+      }
+      return data;
+    }catch{return null}
+  };
+  const saveAttribution=(product,data)=>{
+    if(!product)return;
+    try{localStorage.setItem(ATTR_PREFIX+product,JSON.stringify({...data,ts:Date.now()}));}catch{}
+  };
+
   window.proverjdoGoal=(name,params)=>{
-    try{window.ym(counterId,'reachGoal',name,params||{});}catch{}
+    const payload={...(params||{})};
+    const product=normalizeProduct(payload.product||payload.product_id);
+    const attr=readAttribution(product);
+    if(attr){
+      if(!payload.entry_source_page)payload.entry_source_page=attr.source_page;
+      if(!payload.entry_target)payload.entry_target=attr.target;
+      if(!payload.entry_cta_text)payload.entry_cta_text=attr.cta_text;
+    }
+    try{window.ym(counterId,'reachGoal',name,payload);}catch{}
   };
 
   const path=location.pathname.replace(/\/+$/,'/') || '/';
@@ -42,11 +75,15 @@
       const targetPath=url.pathname.replace(/\/+$/,'/') || '/';
       const product=productTargets[targetPath];
       if(product){
-        window.proverjdoGoal('product_cta_click',{
+        const attribution={
           source_page:path,
-          product,
           target:targetPath,
           cta_text:(link.textContent||'').trim().slice(0,120)
+        };
+        saveAttribution(product,attribution);
+        window.proverjdoGoal('product_cta_click',{
+          ...attribution,
+          product
         });
       }
     }catch{}
