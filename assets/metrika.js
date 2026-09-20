@@ -27,6 +27,50 @@
   if(path==='/') window.proverjdoGoal('landing_view');
   if(path==='/check/') window.proverjdoGoal('check_start');
 
+  const productTargets={
+    '/letter/':'letter',
+    '/compose/':'document',
+    '/check/':'document_check',
+    '/situation-analysis/':'situation'
+  };
+
+  document.addEventListener('click',(event)=>{
+    const link=event.target.closest&&event.target.closest('a[href]');
+    if(!link)return;
+    try{
+      const url=new URL(link.href,location.href);
+      const targetPath=url.pathname.replace(/\/+$/,'/') || '/';
+      const product=productTargets[targetPath];
+      if(product){
+        window.proverjdoGoal('product_cta_click',{
+          source_page:path,
+          product,
+          target:targetPath,
+          cta_text:(link.textContent||'').trim().slice(0,120)
+        });
+      }
+    }catch{}
+  });
+
+  const trackFormStart=(selector,goal,product)=>{
+    const form=document.querySelector(selector);
+    if(!form)return;
+    let sent=false;
+    const send=()=>{
+      if(sent)return;
+      sent=true;
+      window.proverjdoGoal(goal,{source_page:path,product});
+      form.removeEventListener('input',send,true);
+      form.removeEventListener('change',send,true);
+    };
+    form.addEventListener('input',send,true);
+    form.addEventListener('change',send,true);
+  };
+
+  trackFormStart('#letter-form','letter_start','letter');
+  trackFormStart('#compose-form','document_start','document');
+  trackFormStart('#situation-analysis-form','situation_start','situation');
+
   const imagePages={
     '/dop-soglashenie-k-dogovoru/':{slug:'dop-soglashenie-k-dogovoru',hero:'Сергей сравнивает действующий договор и новые условия',inside:'Сергей проверяет изменения для дополнительного соглашения'}
   };
