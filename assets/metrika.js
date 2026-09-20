@@ -20,6 +20,25 @@
   });
 
   const ATTR_PREFIX='proverjdo.attribution.';
+  const SESSION_KEY='proverjdo.analytics.session.v1';
+  const readSession=()=>{try{return JSON.parse(localStorage.getItem(SESSION_KEY)||'null')}catch{return null}};
+  const writeSession=data=>{try{localStorage.setItem(SESSION_KEY,JSON.stringify(data))}catch{}};
+  const getReferrerHost=()=>{try{return document.referrer?new URL(document.referrer).hostname:''}catch{return''}};
+  const params=new URLSearchParams(location.search);
+  let session=readSession();
+  if(!session||Number(session.ts||0)<Date.now()-30*24*60*60*1000){
+    session={
+      ts:Date.now(),
+      landing_page:location.pathname.replace(/\/+$/,'/')||'/',
+      referrer_host:getReferrerHost(),
+      utm_source:params.get('utm_source')||'',
+      utm_medium:params.get('utm_medium')||'',
+      utm_campaign:params.get('utm_campaign')||'',
+      utm_content:params.get('utm_content')||'',
+      utm_term:params.get('utm_term')||''
+    };
+    writeSession(session);
+  }
   const productAliases={
     letter_draft_390:'letter',
     document_revision_590:'document',
@@ -45,7 +64,16 @@
   };
 
   window.proverjdoGoal=(name,params)=>{
-    const payload={...(params||{})};
+    const payload={
+      landing_page:session?.landing_page||undefined,
+      referrer_host:session?.referrer_host||undefined,
+      utm_source:session?.utm_source||undefined,
+      utm_medium:session?.utm_medium||undefined,
+      utm_campaign:session?.utm_campaign||undefined,
+      utm_content:session?.utm_content||undefined,
+      utm_term:session?.utm_term||undefined,
+      ...(params||{})
+    };
     const product=normalizeProduct(payload.product||payload.product_id);
     const attr=readAttribution(product);
     if(attr){
@@ -66,6 +94,15 @@
     '/check/':'document_check',
     '/situation-analysis/':'situation'
   };
+  const currentProduct=productTargets[path];
+  if(currentProduct&&!readAttribution(currentProduct)){
+    let sourcePage=session?.landing_page||path;
+    try{
+      const ref=new URL(document.referrer);
+      if(ref.origin===location.origin)sourcePage=ref.pathname.replace(/\/+$/,'/')||'/';
+    }catch{}
+    saveAttribution(currentProduct,{source_page:sourcePage,target:path,cta_text:''});
+  }
 
   document.addEventListener('click',(event)=>{
     const link=event.target.closest&&event.target.closest('a[href]');
