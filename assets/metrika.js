@@ -94,6 +94,7 @@
     '/letter/':'letter',
     '/compose/':'document',
     '/check/':'document_check',
+    '/explain/':'explain',
     '/situation-analysis/':'situation'
   };
   const currentProduct=productTargets[path];
