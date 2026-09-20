@@ -6,6 +6,24 @@
     try{if(sessionStorage.getItem(key))return;sessionStorage.setItem(key,'1');}catch{}
     goal(name,params);
   };
+  const watchVisible=(id,event,params)=>{
+    const node=document.getElementById(id);
+    if(!node)return;
+    const report=()=>{if(!node.classList.contains('hidden'))once(event,params);};
+    new MutationObserver(report).observe(node,{attributes:true,attributeFilter:['class']});
+    report();
+  };
+  const trackPaymentForm=(id,product)=>{
+    const form=document.getElementById(id);
+    if(!form)return;
+    let last=0;
+    form.addEventListener('submit',()=>{
+      const now=Date.now();
+      if(now-last<1500)return;
+      last=now;
+      goal('payment_started',{product,source_page:location.pathname});
+    });
+  };
 
   document.addEventListener('DOMContentLoaded',()=>{
     try{
@@ -27,7 +45,7 @@
         const report=()=>{
           if(!content.classList.contains('hidden')){
             once('scan_completed');
-            once('paywall_view');
+            once('paywall_view',{product:'document_check'});
           }
         };
         new MutationObserver(report).observe(content,{attributes:true,attributeFilter:['class']});
@@ -35,26 +53,38 @@
       }
     }
 
-    const paymentForm=document.getElementById('contract-payment-form');
-    if(paymentForm){
-      let lastPaymentSubmitAt=0;
-      paymentForm.addEventListener('submit',()=>{
+    watchVisible('letter-preview','paywall_view',{product:'letter'});
+    watchVisible('compose-preview','paywall_view',{product:'document'});
+
+    trackPaymentForm('contract-payment-form','document_check');
+    trackPaymentForm('letter-payment-form','letter');
+    trackPaymentForm('compose-payment-form','document');
+
+    const situationForm=document.getElementById('situation-analysis-form');
+    if(situationForm){
+      let last=0;
+      situationForm.addEventListener('submit',()=>{
         const now=Date.now();
-        if(now-lastPaymentSubmitAt<1500)return;
-        lastPaymentSubmitAt=now;
-        goal('payment_started');
+        if(now-last<1500)return;
+        last=now;
+        goal('payment_started',{product:'situation',source_page:location.pathname});
       });
     }
 
     document.getElementById('proverjdo-login-form')?.addEventListener('submit',()=>goal('login_started'));
 
-    if(document.body.dataset.page==='paid-result'){
-      const content=document.getElementById('result-content');
-      if(content){
-        const report=()=>{if(!content.classList.contains('hidden'))once('paid_result_opened');};
-        new MutationObserver(report).observe(content,{attributes:true,attributeFilter:['class']});
-        report();
-      }
+    const paidResults=[
+      ['result-content','document_check'],
+      ['letter-result-content','letter'],
+      ['compose-result-content','document'],
+      ['situation-result-content','situation']
+    ];
+    for(const [id,product] of paidResults){
+      const node=document.getElementById(id);
+      if(!node)continue;
+      const report=()=>{if(!node.classList.contains('hidden'))once('paid_result_opened',{product});};
+      new MutationObserver(report).observe(node,{attributes:true,attributeFilter:['class']});
+      report();
     }
   });
 })();
