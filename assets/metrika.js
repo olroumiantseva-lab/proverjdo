@@ -146,6 +146,7 @@
 
   trackFormStart('#letter-form','letter_start','letter');
   trackFormStart('#compose-form','document_start','document');
+  trackFormStart('#document-explain-form','explain_start','explain');
   trackFormStart('#situation-analysis-form','situation_start','situation');
 
   const imagePages={
