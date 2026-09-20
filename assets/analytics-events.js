@@ -21,7 +21,7 @@
       const now=Date.now();
       if(now-last<1500)return;
       last=now;
-      goal('payment_started',{product,source_page:location.pathname});
+      goal('payment_attempted',{product,source_page:location.pathname});
     });
   };
 
@@ -57,21 +57,20 @@
     watchVisible('compose-preview','paywall_view',{product:'document'});
 
     trackPaymentForm('contract-payment-form','document_check');
-    trackPaymentForm('letter-payment-form','letter');
-    trackPaymentForm('compose-payment-form','document');
 
-    const situationForm=document.getElementById('situation-analysis-form');
-    if(situationForm){
-      let last=0;
-      situationForm.addEventListener('submit',()=>{
-        const now=Date.now();
-        if(now-last<1500)return;
-        last=now;
-        goal('payment_started',{product:'situation',source_page:location.pathname});
-      });
+    const cancelled=new URLSearchParams(location.search).get('payment')==='cancelled';
+    if(cancelled){
+      const path=location.pathname.replace(/\/+$/,'/')||'/';
+      const product=path==='/letter/'?'letter':path==='/compose/'?'document':path==='/situation-analysis/'?'situation':'';
+      if(product)once('payment_cancelled',{product});
     }
 
-    document.getElementById('proverjdo-login-form')?.addEventListener('submit',()=>goal('login_started'));
+    const loginForm=document.getElementById('proverjdo-login-form');
+    if(loginForm){
+      const page=document.body.dataset.page||'';
+      const product=page==='letter-login'?'letter':page==='compose-login'?'document':page==='situation-login'?'situation':page==='explain-login'?'explain':'';
+      loginForm.addEventListener('submit',()=>goal('login_started',{product:product||undefined}));
+    }
 
     const paidResults=[
       ['result-content','document_check'],
