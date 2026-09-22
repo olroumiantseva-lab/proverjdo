@@ -62,7 +62,7 @@
     const cancelled=new URLSearchParams(location.search).get('payment')==='cancelled';
     if(cancelled){
       const path=location.pathname.replace(/\/+$/,'/')||'/';
-      const product=path==='/letter/'?'letter':path==='/compose/'?'document':path==='/situation-analysis/'?'situation':'';
+      const product=path==='/letter/'?'letter':path==='/compose/'?'document':path==='/explain/'?'explain':path==='/situation-analysis/'?'situation':(path==='/scan/'||path==='/check/')?'document_check':'';
       if(product)once('payment_cancelled',{product});
     }
 
