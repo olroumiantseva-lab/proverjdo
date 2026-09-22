@@ -68,6 +68,7 @@
   window.proverjdoGoal=(name,params)=>{
     const payload={
       landing_page:session?.landing_page||undefined,
+      landing_cluster:classifyCluster(session?.landing_page||'/'),
       referrer_host:session?.referrer_host||undefined,
       utm_source:session?.utm_source||undefined,
       utm_medium:session?.utm_medium||undefined,
@@ -80,10 +81,23 @@
     const attr=readAttribution(product);
     if(attr){
       if(!payload.entry_source_page)payload.entry_source_page=attr.source_page;
+      if(!payload.entry_source_cluster)payload.entry_source_cluster=classifyCluster(attr.source_page||'/');
       if(!payload.entry_target)payload.entry_target=attr.target;
       if(!payload.entry_cta_text)payload.entry_cta_text=attr.cta_text;
     }
     try{window.ym(counterId,'reachGoal',name,payload);}catch{}
+  };
+
+  const classifyCluster=(value)=>{
+    const p=(value||'/').replace(/\/+$/,'/')||'/';
+    if(/^\/(akt-|motivirovannyy-ot-podpisaniya-akta|odnostoronniy-akt)/.test(p))return 'acts';
+    if(/^\/(pretenziya-|sostavit-pretenziyu-online|otvet-na-pretenziyu)/.test(p))return 'claims';
+    if(/^\/(trebovanie-o-vozvrate-deneg|vozvrat-|otkaz-v-vozvrate-deneg-chto-delat)/.test(p))return 'refunds';
+    if(/^\/(pismo-|delovoe-pismo-online|podgotovit-pismo|zapros-dokumentov-u-kontragenta|otvet-na-delovoe-pismo)/.test(p))return 'business_letters';
+    if(/^\/(dogovor-|sostavit-dogovor-online|dop-soglashenie-|izmenenie-usloviy-dogovora|rastorzhenie-dogovora|soglashenie-o-rastorzhenii-dogovora|uvedomlenie-o-rastorzhenii-dogovora|protokol-|otvet-na-protokol-raznoglasiy|kak-podpisat-dogovor-s-protokolom-raznoglasiy)/.test(p))return 'contracts';
+    if(/^\/(proverit-dogovor|obyasnit-dokument|sostavit-dokument|situation-analysis)/.test(p))return 'product_landing';
+    if(p==='/')return 'home';
+    return 'other';
   };
 
   const path=location.pathname.replace(/\/+$/,'/') || '/';
