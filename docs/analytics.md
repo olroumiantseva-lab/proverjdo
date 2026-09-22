@@ -115,3 +115,124 @@
 4. Отвал между каждым соседним шагом.
 5. `payment_cancelled` и `payment_failed` — проблемы у paywall/Robokassa.
 6. `analysis_failed.stage` — где ломается полный разбор.
+
+
+## Сохранённые отчёты и сегменты
+
+### 1. SEO → продажи по кластерам
+Основа: отчет «Параметры целей» или пользовательский отчет по цели `payment_success`.
+
+Группировки:
+1. `entry_source_cluster`
+2. `entry_source_page`
+3. `product`
+
+Метрики:
+- визиты;
+- посетители;
+- достижения `product_cta_click`;
+- достижения `payment_started`;
+- достижения `payment_success`;
+- достижения `paid_result_opened`.
+
+Задача: видеть, какие SEO-кластеры и страницы реально приводят к оплате.
+
+Значения `entry_source_cluster`:
+- `contracts` — договоры, изменения, расторжение, протоколы разногласий;
+- `claims` — претензии;
+- `refunds` — возвраты денег и предоплаты;
+- `business_letters` — деловые письма и запросы;
+- `acts` — акты и отказ от подписания;
+- `product_landing` — основные продуктовые посадочные;
+- `home`;
+- `other`.
+
+### 2. SEO → CTA
+Цель: `product_cta_click`.
+
+Группировки:
+1. `entry_source_cluster`
+2. `entry_source_page`
+3. `entry_target`
+4. `entry_cta_text`
+5. `product`
+
+Задача: находить страницы с трафиком, но слабым переходом в продукт, и сравнивать CTA.
+
+### 3. Оплата: старт → успех
+Цели:
+- `payment_started`;
+- `payment_success`;
+- `payment_failed`;
+- `payment_cancelled`.
+
+Группировки:
+1. `product`
+2. `entry_source_cluster`
+3. `entry_source_page`
+
+Задача: отделять проблему оффера от проблемы платежного шага.
+
+### 4. Отвал после оплаты
+Цели:
+- `payment_success`;
+- `login_started`;
+- `paid_result_opened`.
+
+Группировки:
+1. `product`
+2. `entry_source_page`
+
+Задача: находить случаи, когда оплата подтверждена, но пользователь не открыл результат.
+
+### 5. Источники трафика → деньги
+Группировки:
+1. источник трафика;
+2. `utm_source`;
+3. `utm_medium`;
+4. `utm_campaign`;
+5. `landing_cluster`;
+6. `landing_page`.
+
+Цели:
+- `product_cta_click`;
+- `payment_success`.
+
+Задача: сравнивать поиск, Telegram, прямые заходы и внешние кампании не по визитам, а по оплатам.
+
+### 6. Диагностика ошибок
+События:
+- `payment_failed` с `error_code`;
+- `payment_cancelled`;
+- `analysis_failed` с `stage`.
+
+Задача: технический контроль продуктовой воронки.
+
+## Рекомендуемые группировки в уже созданных воронках
+
+Во все пять продуктовых воронок добавить:
+1. `entry_source_cluster`;
+2. `entry_source_page`;
+3. `landing_cluster`;
+4. `landing_page`;
+5. `utm_source`;
+6. `utm_campaign`.
+
+Для воронок конкретного продукта `product` можно не добавлять: он фиксирован самой воронкой.
+
+## Доход
+
+В подтверждённое событие `payment_success` передаются:
+- `product`;
+- `product_id`;
+- `order_id`;
+- `amount`.
+
+Суммы:
+- письмо — 390;
+- документ — 590;
+- объяснение — 290;
+- проверка договора — 490;
+- полный разбор — 1490.
+
+`payment_success` отправляется только после подтверждённого доступа к результату. Событие после платежного redirect отдельно как продажа больше не учитывается, чтобы не задваивать покупки.
