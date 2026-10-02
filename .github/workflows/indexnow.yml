@@ -38,20 +38,23 @@ jobs:
             done < <(git diff --name-only HEAD^ HEAD)
           fi
 
-          # If no HTML page changed, seed both current SEO clusters.
-          if [ ${#urls[@]} -eq 0 ]; then
-            urls=(
-              "https://${HOST}/sostavit-pretenziyu-online/"
-              "https://${HOST}/pretenziya-postavshchiku/"
-              "https://${HOST}/pretenziya-o-narushenii-srokov-postavki/"
-              "https://${HOST}/pretenziya-po-dogovoru-okazaniya-uslug/"
-              "https://${HOST}/otvet-na-pretenziyu/"
-              "https://${HOST}/sostavit-dogovor-online/"
-              "https://${HOST}/dogovor-okazaniya-uslug/"
-              "https://${HOST}/dogovor-podryada/"
-              "https://${HOST}/dogovor-postavki/"
-              "https://${HOST}/dop-soglashenie-k-dogovoru/"
+          # If sitemap.xml changed, submit only URLs whose sitemap lines changed.
+          # Each sitemap URL is stored on one line, so a lastmod change adds that full line to git diff.
+          if git rev-parse HEAD^ >/dev/null 2>&1 && git diff --name-only HEAD^ HEAD | grep -qx 'sitemap.xml'; then
+            while IFS= read -r url; do
+              [ -n "$url" ] && urls+=("$url")
+            done < <(
+              git diff --unified=0 HEAD^ HEAD -- sitemap.xml |
+              grep '^+' |
+              grep -v '^+++' |
+              sed -n 's#.*<loc>\(https://proverjdo\.ru/[^<]*\)</loc>.*#\1#p'
             )
+          fi
+
+          # A manual run without changed HTML/sitemap does not need to submit stale URLs.
+          if [ ${#urls[@]} -eq 0 ]; then
+            echo "No changed public URLs to submit."
+            exit 0
           fi
 
           # De-duplicate URLs.
