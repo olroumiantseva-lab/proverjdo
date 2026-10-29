@@ -79,7 +79,7 @@
         const email=String(new FormData(form).get('email')||'').trim().toLowerCase();
         const data=await callFunction(config.contractPaymentFunction,{product_id:'contract_check_490',source_site:'proverjdo',resource_id:draft.scan_id,email});
         if(!data.payment_url)throw new Error('PAYMENT_URL_MISSING');
-        window.proverjdoGoal?.('payment_started',{product:'document_check',product_id:'contract_check_490',order_id:String(data.order_id),amount:490});
+        window.proverjdoGoal?.('payment_started',{product:'document_check',product_id:data.product_id||'contract_check_490',order_id:String(data.order_id),...(Number.isFinite(Number(data.amount_kopecks))?{amount:Number(data.amount_kopecks)/100}:{})});
         sessionStorage.setItem('proverjdo.payment.v1',JSON.stringify({order_id:data.order_id,scan_id:draft.scan_id,email}));
         localStorage.setItem(RESULT_ORDER_KEY,String(data.order_id));
         location.assign(data.payment_url);
